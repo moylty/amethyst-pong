@@ -72,7 +72,7 @@ fn main() -> amethyst::Result<()>
 
 
     // create game instance and run
-    let mut game = Application::new(assets_dir, Pong, game_data)?;
+    let mut game = Application::new(assets_dir, Pong::default(), game_data)?;
     game.run();
 
     
