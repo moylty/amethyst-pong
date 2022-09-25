@@ -1,4 +1,6 @@
 //! Pong tutorial 1
+use amethyst::ui::{RenderUi, UiBundle};
+
 mod pong;
 mod systems;
 
@@ -48,6 +50,7 @@ fn main() -> amethyst::Result<()>
     let game_data = GameDataBuilder::default()
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
+                .with_plugin(RenderUi::default())
             // The RenderToWindow plugin provides all the scaffolding for opening a window and drawing on it
                 .with_plugin(
                     RenderToWindow::from_config_path(display_config_path)?
@@ -55,9 +58,11 @@ fn main() -> amethyst::Result<()>
                 )
                 // RenderFlat2D plugin is used to render entities with a `SpriteRender` component.
                 .with_plugin(RenderFlat2D::default()),
+
         )?
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
+        .with_bundle(UiBundle::<StringBindings>::new())?
         // ..
         .with(systems::PaddleSystem, "paddle_system", &["input_system"])
         // ..
@@ -68,7 +73,7 @@ fn main() -> amethyst::Result<()>
             &["paddle_system", "ball_system"],
         )
         // ..
-        ;
+        .with(systems::WinnerSystem, "winner_system", &["ball_system"]);
 
 
     // create game instance and run
