@@ -1,8 +1,13 @@
 //! Pong tutorial 1
 use amethyst::ui::{RenderUi, UiBundle};
+use amethyst::audio::AudioBundle;
+
+use amethyst::audio::DjSystemDesc;
+use crate::audio::Music;
 
 mod pong;
 mod systems;
+mod audio;
 
 use crate::pong::Pong;
 
@@ -63,6 +68,9 @@ fn main() -> amethyst::Result<()>
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
         .with_bundle(UiBundle::<StringBindings>::new())?
+        // audio
+        .with_bundle(AudioBundle::default())?
+
         // ..
         .with(systems::PaddleSystem, "paddle_system", &["input_system"])
         // ..
@@ -73,7 +81,12 @@ fn main() -> amethyst::Result<()>
             &["paddle_system", "ball_system"],
         )
         // ..
-        .with(systems::WinnerSystem, "winner_system", &["ball_system"]);
+        .with(systems::WinnerSystem, "winner_system", &["ball_system"])
+        .with_system_desc(
+            DjSystemDesc::new(|music: &mut Music| music.music.next()),
+            "dj_system",
+            &[],
+        );
 
 
     // create game instance and run
